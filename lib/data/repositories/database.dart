@@ -22,7 +22,9 @@ class ToDoRepository extends SqfliteInterface {
   Future<void> createTable({
     required Database database,
   }) async {
-    // TODO: Carga y ejecuta el script para crear la tabla en la base de datos.
+    // TO DO: Carga y ejecuta el script para crear la tabla en la base de datos.
+    String script = await loadScript();
+    await database.execute(script);
   }
 
   @override
@@ -30,8 +32,10 @@ class ToDoRepository extends SqfliteInterface {
     required Database database,
     required ToDo data,
   }) async {
-    // TODO: En la tabla 'todo_list' guarda data.record.
-    // TODO-HINT: Para evitar errores por conflictos usa conflictAlgorithm = replace
+    // TO DO: En la tabla 'todo_list' guarda data.record.
+    await database.insert('todo_list', data.record,
+        // TO DO-HINT: Para evitar errores por conflictos usa conflictAlgorithm = replace
+        conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   @override
@@ -41,8 +45,12 @@ class ToDoRepository extends SqfliteInterface {
     required List whereArgs,
     String? orderBy,
   }) async {
-    // TODO: Usando where y whereArgs lee la base de datos.
-    // TODO: Retorna una lista de ToDos convirtiendo los registros a ToDo.
+    // TO DO: Usando where y whereArgs lee la base de datos.
+    final records = await database.query('todo_list',
+        where: where, whereArgs: whereArgs, orderBy: orderBy);
+
+    // TO DO: Retorna una lista de ToDos convirtiendo los registros a ToDo.
+    return records.map((record) => ToDoEntity.fromRecord(record)).toList();
   }
 
   @override
@@ -50,8 +58,10 @@ class ToDoRepository extends SqfliteInterface {
     required Database database,
     String? orderBy,
   }) async {
-    // TODO: Lee todos los registros en 'todo_list'
-    // TODO: Retorna una lista de ToDos convirtiendo los registros a ToDo.
+    // TO DO: Lee todos los registros en 'todo_list'
+    final records = await database.query('todo_list', orderBy: orderBy);
+    // TO DO: Retorna una lista de ToDos convirtiendo los registros a ToDo.
+    return records.map((record) => ToDoEntity.fromRecord(record)).toList();
   }
 
   @override
@@ -60,7 +70,9 @@ class ToDoRepository extends SqfliteInterface {
       required String where,
       required List whereArgs,
       required ToDo data}) async {
-    // TODO: Usando where y whereArgs actualiza la base de datos con data.record
+    // TO DO: Usando where y whereArgs actualiza la base de datos con data.record
+    await database.update('todo_list', data.record,
+        where: where, whereArgs: whereArgs);
   }
 
   @override
@@ -68,14 +80,15 @@ class ToDoRepository extends SqfliteInterface {
       {required Database database,
       required String where,
       required List whereArgs}) async {
-    // TODO: Usando where y whereArgs elimina registros de 'todo_list'.
+    // TO DO: Usando where y whereArgs elimina registros de 'todo_list'.
+    await database.delete('todo_list', where: where, whereArgs: whereArgs);
   }
 
   @override
   Future<void> truncate({required Database database}) async {
     // SQLite `TRUNCATE` statement not allowed by SQFlite
-
-    // TODO: Ejecuta un script DELETE sin filtrar para eliminar todos los registros.
+    // TO DO: Ejecuta un script DELETE sin filtrar para eliminar todos los registros.
+    await database.execute('DELETE FROM todo_list');
   }
 
   @override

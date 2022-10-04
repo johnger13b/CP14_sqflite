@@ -19,7 +19,15 @@ class _State extends State<ContentPage> {
     super.initState();
     _textController = TextEditingController();
     controller = Get.find();
-    // TODO: Obten los ToDos de la base de datos y actualiza el estado
+    // TO DO: Obten los ToDos de la base de datos y actualiza el estado
+    controller.initialize().then((_) {
+      controller.getAll().then((value) {
+        controller.toDos = value;
+        setState(() {
+          controller.toDos = value;
+        });
+      });
+    });
   }
 
   @override
@@ -49,9 +57,15 @@ class _State extends State<ContentPage> {
                   ElevatedButton(
                       onPressed: () {
                         final toDo = ToDo(content: _textController.text);
-                        // TODO: 1. Guarda el todo en ToDoService.
-                        // TODO: 2. Guarda el todo en todos.
-                        // TODO: 3. Actualiza el estado.
+                        // TO DO: 1. Guarda el todo en ToDoService.
+                        // TO DO: 2. Guarda el todo en todos.
+                        controller.saveToDo(toDo: toDo).then((_) {
+                          // TO DO: 3. Actualiza el estado.
+                          setState(() {
+                            _textController.clear();
+                            controller.toDos.add(toDo);
+                          });
+                        });
                       },
                       child: const Text("Aceptar"))
                 ],
@@ -76,18 +90,28 @@ class _State extends State<ContentPage> {
                             ),
                             onPressed: () {
                               toDo.completed = true;
-                              // TODO: 1. Actualiza el toDo en ToDoService.
-                              // TODO: 2. Actualiza el toDo en todos.
-                              // TODO: 3. Actualiza el estado.
+                              // TO DO: 1. Actualiza el toDo en ToDoService.
+                              controller.updateToDo(toDo: toDo).then((value) {
+                                setState(() {
+                                  controller.toDos[index] = toDo;
+                                });
+                              });
+                              // TO DO: 2. Actualiza el toDo en todos.
+                              // TO DO: 3. Actualiza el estado.
                             },
                           ),
                         ),
                         title: Text(toDo.content),
                         trailing: IconButton(
                           onPressed: () {
-                            // TODO: 1. Elimina el toDo de ToDoService.
-                            // TODO: 2. Elimina el toDo de todos.
-                            // TODO: 3. Actualiza el estado.
+                            // TO DO: 1. Elimina el toDo de ToDoService.
+                            controller.deleteToDo(toDo: toDo).then((_) {
+                              setState(() {
+                                controller.toDos.removeAt(index);
+                              });
+                            });
+                            // TO DO: 2. Elimina el toDo de todos.
+                            // TO DO: 3. Actualiza el estado.
                           },
                           icon: const Icon(
                             Icons.delete_forever_rounded,
@@ -102,9 +126,14 @@ class _State extends State<ContentPage> {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.delete_sweep_rounded),
         onPressed: () {
-          // TODO: 1. Elimina los ToDOs de ToDoService.
-          // TODO: 2. Limpia todos
-          // TODO: 3. Actualiza el estado.
+          // TO DO: 1. Elimina los ToDOs de ToDoService.
+          controller.deleteAll().then((_) {
+            setState(() {
+              controller.toDos.clear();
+            });
+          });
+          // TO DO: 2. Limpia todos
+          // TO DO: 3. Actualiza el estado.
         },
       ),
     );
